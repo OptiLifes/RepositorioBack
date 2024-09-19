@@ -2,9 +2,8 @@ package com.optilife.repository;
 
 import com.optilife.model.entity.Meta;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+import java.util.List;
 
-@Repository
 public interface MetaRepository extends JpaRepository<Meta, Integer> {
-    // Aquí puedes agregar consultas personalizadas si es necesario
+    List<Meta> findByPerfil_IdPerfil(Integer idPerfil);
 }
