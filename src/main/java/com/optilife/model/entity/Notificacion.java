@@ -1,4 +1,6 @@
 package com.optilife.model.entity;
+
+import com.optilife.enums.TipoNotificacion;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -17,8 +19,12 @@ public class Notificacion {
     @Column(nullable = false)
     private String mensaje;
 
-    // Relaciones
+    // Enum para el tipo de notificación
+    @Enumerated(EnumType.STRING)
+    @Column(name = "tipo_notificacion", nullable = false)
+    private TipoNotificacion tipoNotificacion;
 
+    // Relaciones
     @ManyToOne
     @JoinColumn(name = "usuario_id", nullable = false)
     private Usuario usuario;
