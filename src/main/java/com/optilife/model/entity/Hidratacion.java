@@ -1,4 +1,5 @@
 package com.optilife.model.entity;
+
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -15,10 +16,9 @@ public class Hidratacion {
     private Integer idHidratacion;
 
     @Column(name = "cantidad_agua", nullable = false)
-    private Integer cantidadAgua; // Representado en mililitros
+    private Integer cantidadAgua; // En mililitros
 
-    // Relaciones
-
+    // Relación con la entidad Salud
     @ManyToOne
     @JoinColumn(name = "salud_id", nullable = false)
     private Salud salud;
