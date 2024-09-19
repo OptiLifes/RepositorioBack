@@ -1,9 +1,7 @@
 package com.optilife.model.entity;
-
 import jakarta.persistence.*;
 import lombok.*;
 import java.util.List;
-
 @Entity
 @Table(name = "usuario", uniqueConstraints = {
         @UniqueConstraint(columnNames = "email")

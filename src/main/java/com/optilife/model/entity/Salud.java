@@ -28,5 +28,5 @@ public class Salud {
     private List<Hidratacion> hidrataciones;
 
     @OneToMany(mappedBy = "salud", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Sueno> suenos;
+    private List<Sueño> suenos;
 }
