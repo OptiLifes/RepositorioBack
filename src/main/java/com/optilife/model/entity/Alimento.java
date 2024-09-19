@@ -1,4 +1,5 @@
 package com.optilife.model.entity;
+
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -20,8 +21,13 @@ public class Alimento {
     @Column(nullable = false)
     private Integer calorias;
 
-    // Relaciones
+    @Column(nullable = false)
+    private Integer cantidad;
 
+    @Column(nullable = false)
+    private String categoria; // desayuno, almuerzo, cena
+
+    // Relación con la entidad Salud
     @ManyToOne
     @JoinColumn(name = "salud_id", nullable = false)
     private Salud salud;
