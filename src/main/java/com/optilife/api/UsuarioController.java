@@ -48,7 +48,7 @@ public class UsuarioController {
         }
     }
 
-    // Obtener perfil del usuario
+    // Obtener perfil del usuario (actualizacion de obtener perfil de usuario)
     @GetMapping("/perfil")
     public ResponseEntity<UsuarioPerfilDTO> obtenerPerfilUsuario(Authentication authentication) {
         try {
@@ -60,7 +60,7 @@ public class UsuarioController {
         }
     }
 
-    // Actualización de perfil y metas de salud del usuario
+    // Actualización de perfil y metas de salud del usuario (actualizacion de perfil de usuario)
     @PutMapping("/perfil")
     public ResponseEntity<String> actualizarPerfilUsuario(
             Authentication authentication,
@@ -85,7 +85,7 @@ public class UsuarioController {
         }
     }
 
-    // Actualización de la foto de perfil del usuario
+    // Actualización de la foto de perfil del usuario (Actualizacion de perfil de usuario)
     @PostMapping("/perfil/foto")
     public ResponseEntity<String> actualizarFotoPerfil(
             @RequestParam("foto") MultipartFile foto,

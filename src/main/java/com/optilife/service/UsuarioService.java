@@ -13,9 +13,12 @@ public interface UsuarioService {
 
     UsuarioPerfilDTO obtenerPerfilPorEmail(String email);
 
-    // Método para actualizar el perfil del usuario y sus metas
     void actualizarPerfilUsuario(String email, UsuarioActualizacionDTO usuarioActualizacionDTO) throws Exception;
 
-    // Método para actualizar la foto de perfil
     void actualizarFotoPerfil(String email, MultipartFile foto) throws Exception;
+
+    // Nuevos métodos para la recuperación de contraseña
+    void generarTokenRecuperacion(String email) throws Exception;
+
+    void restablecerContraseña(String token, String nuevaContraseña) throws Exception;
 }
