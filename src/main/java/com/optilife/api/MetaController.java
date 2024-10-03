@@ -28,6 +28,10 @@ public class MetaController {
     public MetaDTO registrarAlimento(@RequestBody MetaDTO metaDTO) {
         return metaService.registrarMetaAlimentacion(metaDTO);
     }
+    @PostMapping("/seguimiento/{idMeta}")
+    public MetaDTO registrarProgresoMeta(@PathVariable Integer idMeta, @RequestBody MetaDTO metaDTO) {
+        return metaService.registrarProgresoMeta(idMeta, metaDTO);
+    }
 
     @GetMapping("/{perfilId}")
     public List<MetaDTO> obtenerMetasPorPerfil(@PathVariable Integer perfilId) {

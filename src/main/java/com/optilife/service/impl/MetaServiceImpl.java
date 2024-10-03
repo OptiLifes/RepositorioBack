@@ -38,7 +38,7 @@ public class MetaServiceImpl implements MetaService {
 
     @Override
     public MetaDTO registrarMetaSueño(MetaDTO metaDTO) {
-        if (metaDTO.getHorasSueno() == null || metaDTO.getHorasSueno() <= 0) {
+        if (metaDTO.getHorasSueño() == null || metaDTO.getHorasSueño() <= 0) {
             throw new IllegalArgumentException("El valor de horas de sueño debe ser válido y mayor que 0");
         }
 
@@ -120,4 +120,20 @@ public class MetaServiceImpl implements MetaService {
 
         return resultado;
     }
+    @Override
+    public MetaDTO registrarProgresoMeta(Integer idMeta, MetaDTO metaDTO) {
+        Meta meta = metaRepository.findById(idMeta)
+                .orElseThrow(() -> new IllegalArgumentException("Meta no encontrada"));
+
+        if (metaDTO.getProgresoDiario() == null || metaDTO.getProgresoDiario() < 0) {
+            throw new IllegalArgumentException("El progreso debe ser un valor válido y mayor que 0");
+        }
+
+        // Actualizar el progreso diario de la meta
+        meta.setProgresoDiario(metaDTO.getProgresoDiario());
+        Meta metaActualizada = metaRepository.save(meta);
+
+        return metaMapper.toDTO(metaActualizada);
+    }
 }
+
