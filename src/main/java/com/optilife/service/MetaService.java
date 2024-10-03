@@ -14,4 +14,6 @@ public interface MetaService {
     List<MetaDTO> obtenerMetasActivas(Integer perfilId);
     Map<String, Object> generarReporteProgreso(Integer perfilId, Integer idMeta, String rangoTiempo);
     Map<String, Integer> obtenerMetasCumplidasVsNoCumplidas(Integer perfilId);
+    MetaDTO registrarProgresoMeta(Integer idMeta, MetaDTO metaDTO);
+
 }

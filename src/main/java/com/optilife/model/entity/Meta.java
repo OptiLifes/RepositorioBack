@@ -28,9 +28,12 @@ public class Meta {
     @Column(name = "litros_agua", nullable = true)
     private Double litrosAgua; // Litros o mililitros de agua diarios como meta
 
+    @Column(name = "progreso_diario", nullable = true)
+    private Double progresoDiario; // Guardar el progreso diario
+
     //Campo para Meta de sueño
-    @Column(name = "horas_sueno", nullable = true)
-    private Integer horasSueno;
+    @Column(name = "horas_sueño", nullable = true)
+    private Integer horasSueño;
 
     // Campos para metas de alimentación
     @Column(name = "calorias", nullable = true)
