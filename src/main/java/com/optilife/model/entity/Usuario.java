@@ -47,4 +47,8 @@ public class Usuario {
 
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Pago> pago;
+
+    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Receta> recetasFavoritas;  // Opcional, solo si quieres que el usuario tenga recetas favoritas
+
 }
