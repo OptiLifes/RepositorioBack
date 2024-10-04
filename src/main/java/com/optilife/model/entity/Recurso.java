@@ -20,6 +20,12 @@ public class Recurso {
     @Column(name = "tipo_recurso", nullable = false)
     private String tipoRecurso;
 
+    @Column(name = "categoria")
+    private String categoria;
+
+    @Column(name = "titulo")
+    private String titulo;
+
     // Relaciones
 
     @ManyToOne
