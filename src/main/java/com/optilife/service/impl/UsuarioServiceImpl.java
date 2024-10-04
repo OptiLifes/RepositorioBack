@@ -7,13 +7,16 @@ import com.optilife.model.entity.Usuario;
 import com.optilife.repository.MetaRepository;
 import com.optilife.repository.UsuarioRepository;
 import com.optilife.service.UsuarioService;
+import com.optilife.service.EmailService;
+import com.optilife.service.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;  // Importamos PasswordEncoder
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import com.optilife.model.dto.UsuarioRegistroDTO;
 import com.optilife.model.dto.UsuarioLoginDTO;
-
+import com.optilife.model.exception.UsuarioNoEncontradoException;
+import java.util.Optional;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -24,6 +27,9 @@ import java.nio.file.Paths;
 public class UsuarioServiceImpl implements UsuarioService {
 
     @Autowired
+    private EmailService emailService;
+
+    @Autowired
     private UsuarioRepository usuarioRepository;
 
     @Autowired
@@ -31,6 +37,10 @@ public class UsuarioServiceImpl implements UsuarioService {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private TokenService tokenService;
+
 
     private final String rutaFotosPerfil = "uploads/fotos_perfil/"; // Ruta de las fotos
 
@@ -94,7 +104,6 @@ public class UsuarioServiceImpl implements UsuarioService {
         return false;
     }
 
-    // Método para actualizar la foto de perfil
     @Override
     public void actualizarFotoPerfil(String email, MultipartFile foto) throws Exception {
         Usuario usuario = usuarioRepository.findByEmail(email);
@@ -134,4 +143,42 @@ public class UsuarioServiceImpl implements UsuarioService {
         usuario.getPerfil().setFotoPerfil(nombreArchivo);
         usuarioRepository.save(usuario);
     }
+
+    // Implementación de la generación de tokens de recuperación de contraseña
+    @Override
+    public void generarTokenRecuperacion(String email) throws Exception {
+        Usuario usuario = usuarioRepository.findByEmail(email);
+        if (usuario == null) {
+            throw new Exception("Usuario no encontrado");
+        }
+
+        // Generar un token único
+        String token = tokenService.generarToken(usuario);
+
+        // Enviar el token por correo electrónico
+        emailService.enviarEmailRecuperacion(usuario.getEmail(), token);
+    }
+
+    @Override
+    public void restablecerContraseña(String token, String nuevaContraseña) throws Exception {
+        // Obtener el Optional<Usuario> del servicio de tokens
+        Optional<Usuario> usuarioOptional = tokenService.validarToken(token);
+
+        // Verificar si el Optional contiene un valor (usuario)
+        if (!usuarioOptional.isPresent()) {
+            // Si el token no es válido o ha expirado, lanzamos una excepción
+            throw new Exception("Token inválido o expirado");
+        }
+
+        // Desempaquetar el Optional para obtener el objeto Usuario
+        Usuario usuario = usuarioOptional.get();
+
+        // Actualizar la contraseña del usuario
+        usuario.setContraseña(passwordEncoder.encode(nuevaContraseña));
+
+        // Guardar el usuario con la nueva contraseña
+        usuarioRepository.save(usuario);
+    }
+
 }
+
