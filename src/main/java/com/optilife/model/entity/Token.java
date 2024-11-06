@@ -1,6 +1,6 @@
 package com.optilife.model.entity;
 
-import jakarta.persistence.*;  // Cambiar a jakarta.persistence en lugar de javax.persistence
+import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
