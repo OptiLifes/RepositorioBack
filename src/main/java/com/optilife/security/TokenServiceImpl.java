@@ -1,16 +1,14 @@
-package com.optilife.service.impl;
+package com.optilife.security;
 
 import com.optilife.model.entity.Token;
 import com.optilife.model.entity.Usuario;
-import com.optilife.repository.TokenRepository;
-import com.optilife.service.TokenService;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.sql.Date;
+import java.util.Date;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -56,6 +54,3 @@ public class TokenServiceImpl implements TokenService {
         return Optional.empty();
     }
 }
-
-
-

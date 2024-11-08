@@ -8,14 +8,14 @@ import com.optilife.repository.MetaRepository;
 import com.optilife.repository.UsuarioRepository;
 import com.optilife.service.UsuarioService;
 import com.optilife.service.EmailService;
-import com.optilife.service.TokenService;
+import com.optilife.security.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import com.optilife.model.dto.UsuarioRegistroDTO;
 import com.optilife.model.dto.UsuarioLoginDTO;
-import com.optilife.model.exception.UsuarioNoEncontradoException;
+
 import java.util.Optional;
 import java.io.File;
 import java.io.IOException;

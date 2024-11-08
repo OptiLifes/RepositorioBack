@@ -1,4 +1,4 @@
-package com.optilife.enums;
+package com.optilife.model.enums;
 
 public enum TipoNotificacion {
     PROGRESO,

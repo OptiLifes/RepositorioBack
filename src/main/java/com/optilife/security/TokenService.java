@@ -1,4 +1,4 @@
-package com.optilife.service;
+package com.optilife.security;
 
 import com.optilife.model.entity.Usuario;
 
