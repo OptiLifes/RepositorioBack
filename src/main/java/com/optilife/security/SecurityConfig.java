@@ -2,14 +2,19 @@ package com.optilife.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity
 public class SecurityConfig {
 
     @Bean
@@ -18,10 +23,12 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, AuthenticationFilter authenticationFilter) throws Exception {
         http
                 .authorizeHttpRequests((requests) -> requests
-                        .requestMatchers("/api/usuarios/login", "/api/usuarios/registro").permitAll() // Usar requestMatchers
+                        .requestMatchers("/api/usuarios/login",
+                                         "/api/usuarios/registro",
+                                         "/api/v1/api/guides").permitAll()
                         .anyRequest().authenticated() // Proteger todas las demás rutas
                 )
                 .logout((logout) -> logout
@@ -30,8 +37,11 @@ public class SecurityConfig {
                         .invalidateHttpSession(true)
                         .deleteCookies("JSESSIONID")
                 )
-                .csrf().disable(); // Desactiva CSRF para simplificar, aunque es recomendable habilitarlo en producción
-
+                .csrf(csrf -> csrf
+                        .requireCsrfProtectionMatcher(new AntPathRequestMatcher("/api/**")) // Desactiva CSRF para simplificar, aunque es recomendable habilitarlo en producción
+                        .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()))
+                //.csrf().disable() solo para desactivar
+                .addFilterBefore(authenticationFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 }

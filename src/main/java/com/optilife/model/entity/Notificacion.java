@@ -1,6 +1,6 @@
 package com.optilife.model.entity;
 
-import com.optilife.enums.TipoNotificacion;
+import com.optilife.model.enums.TipoNotificacion;
 import jakarta.persistence.*;
 import lombok.*;
 

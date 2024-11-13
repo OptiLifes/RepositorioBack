@@ -18,7 +18,6 @@ public class UsuarioRegistroDTO {
     @NotBlank(message = "El tipo de usuario es obligatorio")
     private String tipoUsuario;
 
-    // Getters y Setters
 
     public String getNombre() {
         return nombre;

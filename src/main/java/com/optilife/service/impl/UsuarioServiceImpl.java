@@ -1,20 +1,22 @@
 package com.optilife.service.impl;
 
-import com.optilife.model.dto.UsuarioActualizacionDTO;
-import com.optilife.model.dto.UsuarioPerfilDTO;
+import com.optilife.mapper.UsuarioMapper;
+import com.optilife.model.dto.*;
 import com.optilife.model.entity.Meta;
 import com.optilife.model.entity.Usuario;
+import com.optilife.model.enums.Role;
 import com.optilife.repository.MetaRepository;
 import com.optilife.repository.UsuarioRepository;
+import com.optilife.security.TokenProvider;
+import com.optilife.security.TokenRepository;
 import com.optilife.service.UsuarioService;
 import com.optilife.service.EmailService;
 import com.optilife.security.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import com.optilife.model.dto.UsuarioRegistroDTO;
-import com.optilife.model.dto.UsuarioLoginDTO;
 
 import java.util.Optional;
 import java.io.File;
@@ -42,7 +44,14 @@ public class UsuarioServiceImpl implements UsuarioService {
     private TokenService tokenService;
 
 
-    private final String rutaFotosPerfil = "uploads/fotos_perfil/"; // Ruta de las fotos
+    private final TokenProvider tokenProvider;
+    private final String rutaFotosPerfil = "uploads/fotos_perfil/";// Ruta de las fotos
+
+    public UsuarioServiceImpl(UsuarioRepository usuarioRepository, PasswordEncoder passwordEncoder, TokenProvider tokenProvider) {
+        this.usuarioRepository = usuarioRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.tokenProvider = tokenProvider;
+    }
 
     @Override
     public UsuarioPerfilDTO obtenerPerfilPorEmail(String email) {
@@ -102,6 +111,23 @@ public class UsuarioServiceImpl implements UsuarioService {
         }
 
         return false;
+    }
+
+    public AuthResponseDTO login(UsuarioLoginDTO usuarioLoginDTO) throws Exception {
+        if (!validarCredenciales(usuarioLoginDTO)) {
+            throw new Exception("Credenciales inválidas");
+        }
+
+        Usuario usuario = usuarioRepository.findByEmail(usuarioLoginDTO.getEmail());
+        String token = tokenProvider.generarToken(usuario);
+
+        AuthResponseDTO response = new AuthResponseDTO();
+        response.setToken(token);
+        response.setIdUsuario(usuario.getIdUsuario().longValue());
+        response.setEmail(usuario.getEmail());
+        response.setRole(Role.valueOf(usuario.getTipoUsuario()));
+
+        return response;
     }
 
     @Override

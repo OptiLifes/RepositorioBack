@@ -1,6 +1,6 @@
 package com.optilife.model.dto;
 
-import com.optilife.enums.TipoNotificacion;
+import com.optilife.model.enums.TipoNotificacion;
 
 public class NotificacionDTO {
     private TipoNotificacion tipoNotificacion;

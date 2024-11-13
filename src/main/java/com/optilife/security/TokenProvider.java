@@ -1,27 +1,54 @@
 package com.optilife.security;
 
-import java.security.Key;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-
-import lombok.RequiredArgsConstructor;
-import lombok.Value;
-import org.apache.catalina.User;
-import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import com.optilife.model.entity.Usuario;
+import io.jsonwebtoken.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-@RequiredArgsConstructor
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+import java.util.Date;
+import java.util.UUID;
+
 @Component
 public class TokenProvider {
-    public Authentication getAuthentication(String token) {
 
-        List<GrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority(role));
+    private static final Logger logger = LoggerFactory.getLogger(TokenProvider.class);
 
-        User principal = new User(claims)
+    @Value("${jwt.secret}")
+    private String jwtSecret;
+
+    @Value("${jwt.validity-in-seconds}")
+    private Long jwtValidityInSeconds;
+
+    // Generación del token JWT
+    public String generarToken(Usuario usuario) {
+        String idUsuario = usuario.getIdUsuario().toString();
+        return Jwts.builder()
+                .setSubject(idUsuario)
+                .setIssuedAt(new Date())
+                .setExpiration(Date.from(Instant.now().plus(jwtValidityInSeconds, ChronoUnit.SECONDS)))
+                .signWith(SignatureAlgorithm.HS512, jwtSecret)
+                .compact();
+    }
+    public boolean validarToken(String token) {
+        try {
+            Jwts.parserBuilder().setSigningKey(jwtSecret).build().parseClaimsJws(token);
+            logger.info("Token válido");
+            return true;
+        } catch (ExpiredJwtException e){
+            logger.warn("Token expirado");
+            return false;
+        } catch (JwtException e){
+            logger.error("Token inválido", e);
+            return false;
+        }
     }
 
-    private String jwtSecret;
+    public String obtenerIdUsuario(String token) {
+        Claims claims = Jwts.parserBuilder().setSigningKey(jwtSecret).build().parseClaimsJws(token).getBody();
+        return claims.getSubject();
+    }
 }

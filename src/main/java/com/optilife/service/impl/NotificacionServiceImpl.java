@@ -1,6 +1,6 @@
 package com.optilife.service.impl;
 
-import com.optilife.enums.TipoNotificacion;
+import com.optilife.model.enums.TipoNotificacion;
 import com.optilife.model.entity.Notificacion;
 import com.optilife.model.entity.Usuario;
 import com.optilife.repository.NotificacionRepository;
