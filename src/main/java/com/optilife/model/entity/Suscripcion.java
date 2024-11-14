@@ -24,6 +24,12 @@ public class Suscripcion {
     @Column(name = "fecha_fin", nullable = false)
     private LocalDateTime fechaFin;
 
+    @Column(name = "id_usuario", nullable = false)
+    private Long idUsuario;
+
+    @Column(name = "id_pago", nullable = false)
+    private Long idPago;
+
     // Relaciones
 
     @OneToOne(mappedBy = "suscripcion", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -35,4 +41,6 @@ public class Suscripcion {
 
     @OneToMany(mappedBy = "suscripcion", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Recurso> recursos;
+
+
 }

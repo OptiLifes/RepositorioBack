@@ -1,6 +1,5 @@
 package com.optilife.service.impl;
 
-import com.optilife.mapper.UsuarioMapper;
 import com.optilife.model.dto.*;
 import com.optilife.model.entity.Meta;
 import com.optilife.model.entity.Usuario;
@@ -8,12 +7,10 @@ import com.optilife.model.enums.Role;
 import com.optilife.repository.MetaRepository;
 import com.optilife.repository.UsuarioRepository;
 import com.optilife.security.TokenProvider;
-import com.optilife.security.TokenRepository;
 import com.optilife.service.UsuarioService;
 import com.optilife.service.EmailService;
 import com.optilife.security.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -43,9 +40,8 @@ public class UsuarioServiceImpl implements UsuarioService {
     @Autowired
     private TokenService tokenService;
 
-
     private final TokenProvider tokenProvider;
-    private final String rutaFotosPerfil = "uploads/fotos_perfil/";// Ruta de las fotos
+    private final String rutaFotosPerfil = "uploads/fotos_perfil/"; // Ruta de las fotos
 
     public UsuarioServiceImpl(UsuarioRepository usuarioRepository, PasswordEncoder passwordEncoder, TokenProvider tokenProvider) {
         this.usuarioRepository = usuarioRepository;
@@ -113,13 +109,75 @@ public class UsuarioServiceImpl implements UsuarioService {
         return false;
     }
 
-    public AuthResponseDTO login(UsuarioLoginDTO usuarioLoginDTO) throws Exception {
+    @Override
+    public void actualizarFotoPerfil(String email, MultipartFile foto) throws Exception {
+        Usuario usuario = usuarioRepository.findByEmail(email);
+        if (usuario == null) {
+            throw new Exception("Usuario no encontrado");
+        }
+
+        if (foto.isEmpty()) {
+            throw new Exception("El archivo de imagen está vacío");
+        }
+
+        String tipoArchivo = foto.getContentType();
+        if (!tipoArchivo.equals("image/jpeg") && !tipoArchivo.equals("image/png")) {
+            throw new Exception("Formato de imagen no soportado. Solo se permiten JPG y PNG.");
+        }
+
+        String nombreArchivo = email + "_" + System.currentTimeMillis() + "_" + foto.getOriginalFilename();
+        Path rutaArchivo = Paths.get(rutaFotosPerfil + nombreArchivo);
+
+        File directorio = new File(rutaFotosPerfil);
+        if (!directorio.exists()) {
+            directorio.mkdirs();
+        }
+
+        try {
+            Files.write(rutaArchivo, foto.getBytes());
+        } catch (IOException e) {
+            throw new Exception("Error al guardar la imagen en el servidor.");
+        }
+
+        usuario.getPerfil().setFotoPerfil(nombreArchivo);
+        usuarioRepository.save(usuario);
+    }
+
+    @Override
+    public void generarTokenRecuperacion(String email) throws Exception {
+        Usuario usuario = usuarioRepository.findByEmail(email);
+        if (usuario == null) {
+            throw new Exception("Usuario no encontrado");
+        }
+
+        String token = tokenService.generarToken(usuario);
+        emailService.enviarEmailRecuperacion(usuario.getEmail(), token);
+    }
+
+    @Override
+    public void restablecerContraseña(String token, String nuevaContraseña) throws Exception {
+        Optional<Usuario> usuarioOptional = tokenService.validarToken(token);
+
+        if (!usuarioOptional.isPresent()) {
+            throw new Exception("Token inválido o expirado");
+        }
+
+        Usuario usuario = usuarioOptional.get();
+        usuario.setContraseña(passwordEncoder.encode(nuevaContraseña));
+        usuarioRepository.save(usuario);
+    }
+
+    @Override
+    public AuthResponseDTO iniciarSesion(UsuarioLoginDTO usuarioLoginDTO) throws Exception {
         if (!validarCredenciales(usuarioLoginDTO)) {
             throw new Exception("Credenciales inválidas");
         }
 
         Usuario usuario = usuarioRepository.findByEmail(usuarioLoginDTO.getEmail());
         String token = tokenProvider.generarToken(usuario);
+
+        // Guardar el token en la base de datos
+        tokenService.saveTokenForUser(usuario, token);
 
         AuthResponseDTO response = new AuthResponseDTO();
         response.setToken(token);
@@ -129,82 +187,4 @@ public class UsuarioServiceImpl implements UsuarioService {
 
         return response;
     }
-
-    @Override
-    public void actualizarFotoPerfil(String email, MultipartFile foto) throws Exception {
-        Usuario usuario = usuarioRepository.findByEmail(email);
-        if (usuario == null) {
-            throw new Exception("Usuario no encontrado");
-        }
-
-        // Validación de archivo vacío
-        if (foto.isEmpty()) {
-            throw new Exception("El archivo de imagen está vacío");
-        }
-
-        // Validación de tipo de archivo
-        String tipoArchivo = foto.getContentType();
-        if (!tipoArchivo.equals("image/jpeg") && !tipoArchivo.equals("image/png")) {
-            throw new Exception("Formato de imagen no soportado. Solo se permiten JPG y PNG.");
-        }
-
-        // Generar nombre único para la imagen
-        String nombreArchivo = email + "_" + System.currentTimeMillis() + "_" + foto.getOriginalFilename();
-        Path rutaArchivo = Paths.get(rutaFotosPerfil + nombreArchivo);
-
-        // Crear el directorio si no existe
-        File directorio = new File(rutaFotosPerfil);
-        if (!directorio.exists()) {
-            directorio.mkdirs();
-        }
-
-        // Guardar la imagen en el sistema
-        try {
-            Files.write(rutaArchivo, foto.getBytes());
-        } catch (IOException e) {
-            throw new Exception("Error al guardar la imagen en el servidor.");
-        }
-
-        // Actualizar la ruta de la foto de perfil del usuario
-        usuario.getPerfil().setFotoPerfil(nombreArchivo);
-        usuarioRepository.save(usuario);
-    }
-
-    // Implementación de la generación de tokens de recuperación de contraseña
-    @Override
-    public void generarTokenRecuperacion(String email) throws Exception {
-        Usuario usuario = usuarioRepository.findByEmail(email);
-        if (usuario == null) {
-            throw new Exception("Usuario no encontrado");
-        }
-
-        // Generar un token único
-        String token = tokenService.generarToken(usuario);
-
-        // Enviar el token por correo electrónico
-        emailService.enviarEmailRecuperacion(usuario.getEmail(), token);
-    }
-
-    @Override
-    public void restablecerContraseña(String token, String nuevaContraseña) throws Exception {
-        // Obtener el Optional<Usuario> del servicio de tokens
-        Optional<Usuario> usuarioOptional = tokenService.validarToken(token);
-
-        // Verificar si el Optional contiene un valor (usuario)
-        if (!usuarioOptional.isPresent()) {
-            // Si el token no es válido o ha expirado, lanzamos una excepción
-            throw new Exception("Token inválido o expirado");
-        }
-
-        // Desempaquetar el Optional para obtener el objeto Usuario
-        Usuario usuario = usuarioOptional.get();
-
-        // Actualizar la contraseña del usuario
-        usuario.setContraseña(passwordEncoder.encode(nuevaContraseña));
-
-        // Guardar el usuario con la nueva contraseña
-        usuarioRepository.save(usuario);
-    }
-
 }
-

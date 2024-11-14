@@ -1,9 +1,6 @@
 package com.optilife.service;
 
-import com.optilife.model.dto.UsuarioActualizacionDTO;
-import com.optilife.model.dto.UsuarioLoginDTO;
-import com.optilife.model.dto.UsuarioRegistroDTO;
-import com.optilife.model.dto.UsuarioPerfilDTO;
+import com.optilife.model.dto.*;
 import org.springframework.web.multipart.MultipartFile;
 
 public interface UsuarioService {
@@ -13,11 +10,12 @@ public interface UsuarioService {
 
     UsuarioPerfilDTO obtenerPerfilPorEmail(String email);
 
+    AuthResponseDTO iniciarSesion(UsuarioLoginDTO usuarioLoginDTO) throws Exception;
+
     void actualizarPerfilUsuario(String email, UsuarioActualizacionDTO usuarioActualizacionDTO) throws Exception;
 
     void actualizarFotoPerfil(String email, MultipartFile foto) throws Exception;
 
-    // Nuevos métodos para la recuperación de contraseña
     void generarTokenRecuperacion(String email) throws Exception;
 
     void restablecerContraseña(String token, String nuevaContraseña) throws Exception;

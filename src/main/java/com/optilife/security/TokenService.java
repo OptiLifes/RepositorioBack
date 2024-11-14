@@ -13,4 +13,6 @@ public interface TokenService {
     // Validar el token y obtener el usuario correspondiente
     Optional<Usuario> validarToken(String token);
 
+    void saveTokenForUser(Usuario usuario, String token);
+
 }

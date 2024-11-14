@@ -1,3 +1,5 @@
+package com.optilife.api;
+
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestMapping;
 import com.optilife.service.UsuarioService;

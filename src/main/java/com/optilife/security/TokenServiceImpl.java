@@ -12,11 +12,11 @@ import java.util.Optional;
 @Service
 public class TokenServiceImpl implements TokenService {
 
-    @Autowired
     private TokenRepository tokenRepository;
 
     @Autowired
     private TokenProvider tokenProvider;
+
 
     @Override
     public String generarToken(Usuario usuario) {
@@ -43,5 +43,9 @@ public class TokenServiceImpl implements TokenService {
             }
         }
         return Optional.empty();
+    }
+    @Override
+    public void saveTokenForUser(Usuario usuario, String token) {
+        tokenRepository.saveTokenForUser(token, usuario);
     }
 }

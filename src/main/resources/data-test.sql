@@ -1,8 +1,8 @@
-INSERT INTO Usuario (id_usuario, nombre, email, contraseña, tipo_usuario, suscripcion_id)
+INSERT INTO Usuario (nombre, email, contraseña, tipo_usuario, suscripcion_id)
 VALUES
-    (1, 'Juan Pérez', 'juan.perez@mail.com', 'password123', 'premium', 1),
-    (2, 'María Gómez', 'maria.gomez@mail.com', 'password456', 'free', NULL),
-    (3, 'Carlos Sanchez', 'carlos.sanchez@mail.com', 'password789', 'premium', 2);
+    ( 'Juan Pérez', 'juan.perez@mail.com', 'password123', 'premium', 1),
+    ( 'María Gómez', 'maria.gomez@mail.com', 'password456', 'free', 6),
+    ( 'Carlos Sanchez', 'carlos.sanchez@mail.com', 'password789', 'premium', 2);
 INSERT INTO Perfil (id_perfil, foto_perfil, usuario_id)
 VALUES
     (1, 'foto1.jpg', 1),
@@ -49,18 +49,3 @@ VALUES
     (1, 7.5, 1),
     (2, 8.0, 2),
     (3, 6.5, 3);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
