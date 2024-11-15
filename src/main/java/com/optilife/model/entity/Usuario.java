@@ -33,7 +33,7 @@ public class Usuario {
     // Relaciones
 
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "suscripcion_id", unique = true)
+    @JoinColumn(name = "id_suscripcion")
     private Suscripcion suscripcion;
 
     @OneToOne(mappedBy = "usuario", cascade = CascadeType.ALL, fetch = FetchType.LAZY)

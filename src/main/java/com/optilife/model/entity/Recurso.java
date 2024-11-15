@@ -14,7 +14,7 @@ public class Recurso {
     @Column(name = "id_recurso")
     private Integer idRecurso;
 
-    @Column(nullable = false)
+    @Column(name = "descripcion", nullable = false)
     private String descripcion;
 
     @Column(name = "tipo_recurso", nullable = false)
@@ -29,7 +29,7 @@ public class Recurso {
     // Relaciones
 
     @ManyToOne
-    @JoinColumn(name = "usuario_id", nullable = false)
+    @JoinColumn(name = "id_usuario", nullable = false)
     private Usuario usuario;
 
     @ManyToOne

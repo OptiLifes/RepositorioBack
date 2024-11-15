@@ -18,7 +18,7 @@ public class Salud {
     // Relaciones
 
     @OneToOne
-    @JoinColumn(name = "perfil_id", nullable = false)
+    @JoinColumn(name = "id_perfil", nullable = false)
     private Perfil perfil;
 
     @OneToMany(mappedBy = "salud", cascade = CascadeType.ALL, fetch = FetchType.LAZY)

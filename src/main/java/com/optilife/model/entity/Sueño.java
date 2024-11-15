@@ -11,7 +11,7 @@ public class Sueño {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_sueño")
+    @Column(name = "id_sueno")
     private Integer idSueño;
 
     @Column(name = "horas_dormidas", nullable = false)
@@ -20,6 +20,6 @@ public class Sueño {
     // Relaciones
 
     @ManyToOne
-    @JoinColumn(name = "salud_id", nullable = false)
+    @JoinColumn(name = "id_salud", nullable = false)
     private Salud salud;
 }

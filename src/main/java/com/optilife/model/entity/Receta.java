@@ -1,45 +1,40 @@
 package com.optilife.model.entity;
 
 import jakarta.persistence.*;
-import java.util.List;
+import lombok.*;
 
 @Entity
+@Table(name = "recetas")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class Receta {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Column(name = "id_receta")
+    private Integer idReceta;
 
+    @Column(name = "nombre", nullable = false)
     private String nombre;
 
-    @Column(length = 2000) // Para descripciones largas
+    @Column(name = "descripcion", nullable = false)
     private String descripcion;
 
-    private String categoria;
-    private Integer calorias;
-    private Integer carbohidratos;
-    private Integer grasas;
-    private Integer proteinas;
+    @Column(name = "tipo_receta", nullable = false)
+    private String tipoReceta; // Ejemplo: "Vegetariana", "Keto", "Postre", etc.
 
-    @ElementCollection
-    private List<String> ingredientes;
+    @Column(name = "categoria")
+    private String categoria; // Ejemplo: "Desayuno", "Almuerzo", "Cena", etc.
 
-    @ElementCollection
-    private List<String> restriccionesAlimentarias; // Ej. Sin gluten, vegano, etc.
+    // Relaciones
 
     @ManyToOne
-    @JoinColumn(name = "usuario_id")
-    private Usuario usuario;
+    @JoinColumn(name = "id_usuario", nullable = false)
+    private Usuario usuario; // Usuario que crea la receta
 
-    // Getters y Setters
-
-    // Método para verificar si una receta cumple con una restricción
-    public boolean cumpleRestricciones(List<String> restriccionesUsuario) {
-        for (String restriccion : restriccionesUsuario) {
-            if (this.restriccionesAlimentarias.contains(restriccion)) {
-                return true;
-            }
-        }
-        return false;
-    }
+    @ManyToOne
+    @JoinColumn(name = "id_suscripcion", nullable = false)
+    private Suscripcion suscripcion; // Suscripción que permite acceso a la receta
 }
+

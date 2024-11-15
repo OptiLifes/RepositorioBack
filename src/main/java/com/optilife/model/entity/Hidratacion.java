@@ -20,6 +20,6 @@ public class Hidratacion {
 
     // Relación con la entidad Salud
     @ManyToOne
-    @JoinColumn(name = "salud_id", nullable = false)
+    @JoinColumn(name = "id_salud", nullable = false)
     private Salud salud;
 }

@@ -15,10 +15,10 @@ public class Alimento {
     @Column(name = "id_alimento")
     private Integer idAlimento;
 
-    @Column(nullable = false)
+    @Column(name = "nombre_alimento", nullable = false)
     private String nombre;
 
-    @Column(nullable = false)
+    @Column(name = "calorias", nullable = false)
     private Integer calorias;
 
     @Column(nullable = false)
@@ -29,6 +29,6 @@ public class Alimento {
 
     // Relación con la entidad Salud
     @ManyToOne
-    @JoinColumn(name = "salud_id", nullable = false)
+    @JoinColumn(name = "id_salud", nullable = false)
     private Salud salud;
 }

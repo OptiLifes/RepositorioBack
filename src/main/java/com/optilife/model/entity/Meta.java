@@ -24,32 +24,31 @@ public class Meta {
     @Column(name = "objetivo_total", nullable = false)
     private Integer objetivoTotal; // Objetivo general de la meta (ej. minutos, calorías, litros, etc.)
 
-    // Campo específico para la meta de hidratación
-    @Column(name = "litros_agua", nullable = true)
+    @Column(name = "litros_agua", nullable = false)
     private Double litrosAgua; // Litros o mililitros de agua diarios como meta
 
     @Column(name = "progreso_diario", nullable = true)
     private Double progresoDiario; // Guardar el progreso diario
 
     //Campo para Meta de sueño
-    @Column(name = "horas_sueño", nullable = true)
+    @Column(name = "horas_sueño", nullable = false)
     private Integer horasSueño;
 
     // Campos para metas de alimentación
-    @Column(name = "calorias", nullable = true)
+    @Column(name = "calorias", nullable = false)
     private Integer calorias;
 
-    @Column(name = "proteinas", nullable = true)
+    @Column(name = "proteinas", nullable = false)
     private Integer proteinas;
 
-    @Column(name = "grasas", nullable = true)
+    @Column(name = "grasas", nullable = false)
     private Integer grasas;
 
-    @Column(name = "carbohidratos", nullable = true)
+    @Column(name = "carbohidratos", nullable = false)
     private Integer carbohidratos;
 
     // Relación con el perfil del usuario
     @ManyToOne
-    @JoinColumn(name = "perfil_id", nullable = false)
+    @JoinColumn(name = "id_perfil", nullable = false)
     private Perfil perfil;
 }

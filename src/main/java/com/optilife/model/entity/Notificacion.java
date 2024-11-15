@@ -16,16 +16,14 @@ public class Notificacion {
     @Column(name = "id_notificacion")
     private Integer idNotificacion;
 
-    @Column(nullable = false)
+    @Column(name = "mensaje", nullable = false)
     private String mensaje;
 
-    // Enum para el tipo de notificación
     @Enumerated(EnumType.STRING)
     @Column(name = "tipo_notificacion", nullable = false)
     private TipoNotificacion tipoNotificacion;
 
-    // Relaciones
     @ManyToOne
-    @JoinColumn(name = "usuario_id", nullable = false)
+    @JoinColumn(name = "id_usuario", nullable = false)
     private Usuario usuario;
 }

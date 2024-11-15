@@ -16,5 +16,5 @@ public class SaludResource {
     private String categoria;
     @Column(nullable = false)
     private String contenido;
-    // Otros campos necesarios
+
 }

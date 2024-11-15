@@ -1,6 +1,8 @@
 package com.optilife.model.entity;
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
+
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -24,23 +26,15 @@ public class Suscripcion {
     @Column(name = "fecha_fin", nullable = false)
     private LocalDateTime fechaFin;
 
-    @Column(name = "id_usuario", nullable = false)
-    private Long idUsuario;
-
-    @Column(name = "id_pago", nullable = false)
-    private Long idPago;
-
     // Relaciones
-
-    @OneToOne(mappedBy = "suscripcion", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToOne
+    @JoinColumn(name = "id_usuario", unique = true)
     private Usuario usuario;
 
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "pago_id", unique = true)
+    @JoinColumn(name = "id_pago", unique = true)
     private Pago pago;
 
     @OneToMany(mappedBy = "suscripcion", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Recurso> recursos;
-
-
 }

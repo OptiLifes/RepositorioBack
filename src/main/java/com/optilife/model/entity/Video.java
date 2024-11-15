@@ -22,4 +22,7 @@ public class Video {
 
     @Column(nullable = false)
     private String miniaturaUrl;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Recurso recurso;
 }

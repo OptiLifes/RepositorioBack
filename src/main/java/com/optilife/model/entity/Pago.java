@@ -16,16 +16,16 @@ public class Pago {
     @Column(name = "id_pago")
     private Integer idPago;
 
-    @Column(nullable = false)
+    @Column(name = "metodo_pago", nullable = false)
     private String metodoPago;
 
-    @Column(nullable = false)
+    @Column(name = "monto", nullable = false)
     private Integer monto;
 
     // Relaciones
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "usuario_id", nullable = false)
+    @JoinColumn(name = "id_usuario", nullable = false)
     private Usuario usuario;
 
     @OneToOne(mappedBy = "pago", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
