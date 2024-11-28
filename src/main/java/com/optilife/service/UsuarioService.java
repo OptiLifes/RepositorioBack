@@ -1,9 +1,14 @@
 package com.optilife.service;
 
 import com.optilife.model.dto.*;
+import com.optilife.model.dto.AuthResponseDTO;
+import com.optilife.model.dto.UsuarioLoginDTO;
+import com.optilife.model.dto.UsuarioActualizacionDTO;
+import com.optilife.model.dto.UsuarioRegistroDTO;
 import org.springframework.web.multipart.MultipartFile;
 
 public interface UsuarioService {
+
     void registrarUsuario(UsuarioRegistroDTO usuarioRegistroDTO) throws Exception;
 
     boolean validarCredenciales(UsuarioLoginDTO usuarioLoginDTO) throws Exception;

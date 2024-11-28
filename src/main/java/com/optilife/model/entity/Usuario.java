@@ -1,11 +1,12 @@
 package com.optilife.model.entity;
+
 import jakarta.persistence.*;
 import lombok.*;
 import java.util.List;
 @Entity
 @Table(name = "usuario", uniqueConstraints = {
         @UniqueConstraint(columnNames = "email")
-})
+    })
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -30,6 +31,7 @@ public class Usuario {
     @Column(name = "tipo_usuario", nullable = false)
     private String tipoUsuario;
 
+
     // Relaciones
 
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -49,5 +51,9 @@ public class Usuario {
     private List<Pago> pago;
 
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Receta> recetasFavoritas;  // Opcional, solo si quieres que el usuario tenga recetas favoritas
+    private List<Receta> recetasFavoritas;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name="role_id", referencedColumnName = "id")
+    private Role role;
 }

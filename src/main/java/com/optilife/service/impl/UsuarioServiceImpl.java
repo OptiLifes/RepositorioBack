@@ -3,17 +3,24 @@ package com.optilife.service.impl;
 import com.optilife.model.dto.*;
 import com.optilife.model.entity.Meta;
 import com.optilife.model.entity.Usuario;
-import com.optilife.model.enums.Role;
+import com.optilife.model.enums.ERole;
 import com.optilife.repository.MetaRepository;
+import com.optilife.repository.RoleRepository;
 import com.optilife.repository.UsuarioRepository;
 import com.optilife.security.TokenProvider;
+import com.optilife.security.UserPrincipal;
 import com.optilife.service.UsuarioService;
 import com.optilife.service.EmailService;
-import com.optilife.security.TokenService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.token.TokenService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 import java.io.File;
@@ -23,31 +30,31 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 @Service
+@RequiredArgsConstructor
 public class UsuarioServiceImpl implements UsuarioService {
 
-    @Autowired
-    private EmailService emailService;
+    private final MetaRepository metaRepository;
+    private final UsuarioRepository usuarioRepository;
+    private final RoleRepository roleRepository;
 
-    @Autowired
-    private UsuarioRepository usuarioRepository;
 
-    @Autowired
-    private MetaRepository metaRepository;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-
-    @Autowired
-    private TokenService tokenService;
-
+    private final AuthenticationManager authenticationManager;
     private final TokenProvider tokenProvider;
     private final String rutaFotosPerfil = "uploads/fotos_perfil/"; // Ruta de las fotos
 
-    public UsuarioServiceImpl(UsuarioRepository usuarioRepository, PasswordEncoder passwordEncoder, TokenProvider tokenProvider) {
-        this.usuarioRepository = usuarioRepository;
-        this.passwordEncoder = passwordEncoder;
-        this.tokenProvider = tokenProvider;
-    }
+    @Override
+    public AuthResponseDTO login(UsuarioLoginDTO usuarioLoginDTO){
+
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(usuarioLoginDTO.getEmail(), usuarioLoginDTO
+                );
+    }   UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
+        Usuario usuario = userPrincipal.getUsuario();
+
+        //Verificar si es un administrador
+    boolean isAdmin = usuario.getRole().getName().equals(ERole.ADMIN);
+    String token=tokenProvider.createAccessToken(authentication);
+    AuthResponseDTO responseDTO = userMapper.toAuthResponseDTO(usuario, token);
 
     @Override
     public UsuarioPerfilDTO obtenerPerfilPorEmail(String email) {
@@ -100,20 +107,19 @@ public class UsuarioServiceImpl implements UsuarioService {
 
     @Override
     public boolean validarCredenciales(UsuarioLoginDTO usuarioLoginDTO) throws Exception {
-        Usuario usuario = usuarioRepository.findByEmail(usuarioLoginDTO.getEmail());
+        Usuario usuario = usuarioRepository.findByEmail(usuarioLoginDTO.getEmail())
+                .orElseThrow(() -> new Exception("Usuario no encontrado"));
 
-        if (usuario != null) {
             return passwordEncoder.matches(usuarioLoginDTO.getContraseña(), usuario.getContraseña());
-        }
-
-        return false;
     }
 
     @Override
     public void actualizarFotoPerfil(String email, MultipartFile foto) throws Exception {
-        Usuario usuario = usuarioRepository.findByEmail(email);
-        if (usuario == null) {
-            throw new Exception("Usuario no encontrado");
+        Usuario usuario = usuarioRepository.findByEmail(email)
+                .orElseThrow(() -> new Exception("Usuario no encontrado"));
+
+        if (foto.isEmpty()) {
+            throw new Exception("El archivo de imagen está vacío");
         }
 
         if (foto.isEmpty()) {
@@ -145,12 +151,10 @@ public class UsuarioServiceImpl implements UsuarioService {
 
     @Override
     public void generarTokenRecuperacion(String email) throws Exception {
-        Usuario usuario = usuarioRepository.findByEmail(email);
-        if (usuario == null) {
-            throw new Exception("Usuario no encontrado");
-        }
+        Usuario usuario = usuarioRepository.findByEmail(email)
+                .orElseThrow(() -> new Exception("Usuario no encontrado"));
 
-        String token = tokenService.generarToken(usuario);
+        String token = tokenProvider.generarToken(usuario);
         emailService.enviarEmailRecuperacion(usuario.getEmail(), token);
     }
 
