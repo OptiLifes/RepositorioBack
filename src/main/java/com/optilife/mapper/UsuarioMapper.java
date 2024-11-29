@@ -1,17 +1,22 @@
 package com.optilife.mapper;
 
 import com.optilife.model.dto.UsuarioPerfilDTO;
+import com.optilife.model.dto.UsuarioRegistroDTO;
 import com.optilife.model.entity.Usuario;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
+import org.modelmapper.ModelMapper;
 
 @Mapper
 public interface UsuarioMapper {
-    UsuarioMapper INSTANCE = Mappers.getMapper(UsuarioMapper.class);
+    private final ModelMapper modelMapper;
 
-    // Método para convertir de entidad Usuario a DTO UsuarioPerfilDTO
-    UsuarioPerfilDTO toUsuarioPerfilDTO(Usuario usuario);
+    public Usuario toUserEntity(UsuarioRegistroDTO registroDTO){
+        return modelMapper.map(registroDTO, Usuario.class);
+    }
 
-    // Método para convertir de DTO UsuarioPerfilDTO a entidad Usuario (en caso de necesidad)
-    Usuario toUsuario(UsuarioPerfilDTO usuarioPerfilDTO);
+    public UsuarioPerfilDTO toUsuarioPerfilDTO(Usuario usuario){
+        UsuarioPerfilDTO usuarioPerfilDTO = modelMapper.map(usuario, UsuarioPerfilDTO.class);
+        if(usuario.get)
+    }
 }

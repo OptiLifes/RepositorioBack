@@ -1,5 +1,6 @@
 package com.optilife.service.impl;
 
+import com.optilife.mapper.UsuarioMapper;
 import com.optilife.model.dto.*;
 import com.optilife.model.entity.Meta;
 import com.optilife.model.entity.Usuario;
@@ -36,6 +37,7 @@ public class UsuarioServiceImpl implements UsuarioService {
     private final MetaRepository metaRepository;
     private final UsuarioRepository usuarioRepository;
     private final RoleRepository roleRepository;
+    private final UsuarioMapper usuarioMapper;
 
 
     private final AuthenticationManager authenticationManager;
@@ -54,7 +56,7 @@ public class UsuarioServiceImpl implements UsuarioService {
         //Verificar si es un administrador
     boolean isAdmin = usuario.getRole().getName().equals(ERole.ADMIN);
     String token=tokenProvider.createAccessToken(authentication);
-    AuthResponseDTO responseDTO = userMapper.toAuthResponseDTO(usuario, token);
+    AuthResponseDTO responseDTO = usuarioMapper.toAuthResponseDTO(usuario, token);
 
     @Override
     public UsuarioPerfilDTO obtenerPerfilPorEmail(String email) {
